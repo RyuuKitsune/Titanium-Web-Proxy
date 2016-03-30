@@ -426,6 +426,30 @@ namespace Titanium.Web.Proxy.EventArguments
             ProxySession.Request.CancelRequest = true;
         }
 
+        /// <summary>
+        /// Before request is made to server,
+        /// pretend it is cached and send an empty response back.
+        /// </summary>
+        public void NotModified(DateTime lastModified)
+        {
+            Response fakeResponse = new Response();
+            fakeResponse.ResponseStatusCode = "304";
+            fakeResponse.ResponseStatusDescription = "Not Modified";
+
+            fakeResponse.ResponseHeaders.Add(new HttpHeader("Cache-Control", "public, no-cache, max-age=0"));
+            fakeResponse.ResponseHeaders.Add(new HttpHeader("Connection", "keep-alive"));
+            fakeResponse.ResponseHeaders.Add(new HttpHeader("Date", DateTime.Now.ToString()));
+            fakeResponse.ResponseHeaders.Add(new HttpHeader("Last-Modified", lastModified.ToString()));
+            fakeResponse.ResponseHeaders.Add(new HttpHeader("Pragma", "public, no-cache"));
+            fakeResponse.ResponseHeaders.Add(new HttpHeader("Server", "nginx"));
+
+            fakeResponse.ResponseBody = new byte[0];
+
+            Respond(fakeResponse);
+
+            ProxySession.Request.CancelRequest = true;
+        }
+
         /// a generic responder method 
         public void Respond(Response response)
         {
