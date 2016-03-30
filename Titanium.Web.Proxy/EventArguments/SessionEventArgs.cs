@@ -433,6 +433,8 @@ namespace Titanium.Web.Proxy.EventArguments
         public void NotModified(DateTime lastModified)
         {
             Response fakeResponse = new Response();
+
+            fakeResponse.HttpVersion = ProxySession.Request.HttpVersion;
             fakeResponse.ResponseStatusCode = "304";
             fakeResponse.ResponseStatusDescription = "Not Modified";
 
